@@ -136,7 +136,7 @@ if (isset($_POST["submit"])) {
                 <div class="form-group">
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 </div>
-                <!-- <a href="forgot-password.php">Lupa Password?</a> -->
+                <a href="forgot-password.php">Lupa Password?</a>
                 <button class="btn btn-dark" type="submit" name="submit">Login</button>
             </form>
         </div>

@@ -3,8 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brave ADV Lightbox</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
@@ -25,7 +24,11 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <link href="assets/css/style.css" rel="stylesheet">
-
+  <style>
+    #services{
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
@@ -60,11 +63,11 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
-          <li class="dropdown"><a class="nav-link scrollto" href="#about">About</a></li>
-          <li><a class="nav-link scrollto" href="#services">Produk Kami</a></li>
-          <li><a class="nav-link scrollto" href="#services2">Cara Pemesanan</a></li>
-          <li><a class="nav-link scrollto" href="#footer">Contact</a></li>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Produk Kami</a></li>
+          <li><a href="#services2">Cara Pemesanan</a></li>
+          <li><a href="#footer">Contact</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
@@ -101,7 +104,7 @@
     </section><!-- End About Section -->
 
 <!-- ======= Produk ======= -->
-<section id="services" class="services">
+<section id="services" class="services" name="services">
   <div class="container">
 
     <div class="section-title">
@@ -131,48 +134,79 @@
 
 
 <!-- Filter Form - Button Group -->
-<div class="row mb-3" align="center">
-  <form method="get" class="w-100">
-    <div class="btn-group" role="group" aria-label="Filter by jenis">
-      <button type="submit" class="btn <?= $jenis === 'all' ? 'btn-success' : 'btn-secondary'; ?>" name="jenis" value="all">Semua produk</button>
-      <?php foreach ($jenis_produk as $jenis_option): ?>
-        <button type="submit" class="btn <?= $jenis === $jenis_option ? 'btn-success' : 'btn-secondary'; ?>" name="jenis" value="<?= $jenis_option; ?>"><?= $jenis_option; ?></button>
-      <?php endforeach; ?>
-    </div>
-  </form>
+<div class="row mb-3">
+  <div class="col">
+    <form method="get" action="#services" class="w-100"> <!-- Include the anchor tag in the form action -->
+      <div class="btn-group d-flex flex-wrap" role="group" aria-label="Filter by jenis">
+        <button type="submit" class="btn <?= $jenis === 'all' ? 'btn-success' : 'btn-secondary'; ?> flex-grow-1 btn-sm mb-2" name="jenis" value="all">Semua</button>
+        <?php foreach ($jenis_produk as $jenis_option): ?>
+          <button type="submit" class="btn <?= $jenis === $jenis_option ? 'btn-success' : 'btn-secondary'; ?> flex-grow-1 btn-sm mb-2" name="jenis" value="<?= $jenis_option; ?>"><?= $jenis_option; ?></button>
+        <?php endforeach; ?>
+      </div>
+    </form>
+  </div>
 </div>
 
+
   </div>
-</section><!-- End Produk Section -->
+</section>
 
 <!-- Carousel -->
 <div id="produkCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <?php $active = true; ?>
     <!-- Loop produk -->
-<?php foreach ($produk as $index => $row): ?>
-  <?php if ($index % 3 == 0): ?>
-    <div class="carousel-item<?= $active ? ' active' : '' ?>">
-      <div class="container">
-        <div class="row justify-content-center">
-  <?php endif; ?>
+    <?php foreach ($produk as $index => $row): ?>
+      <?php if ($index % 3 == 0): ?>
+        <div class="carousel-item<?= $active ? ' active' : '' ?>">
+          <div class="container">
+            <div class="row justify-content-center">
+      <?php endif; ?>
 
-  <div class="col">
-    <div class="card" style="width: 18rem;">
-      <img src="assets/img/<?= $row['gambar']; ?>" class="card-img-top" alt="..." data-bs-toggle="modal" data-bs-target="#detailProdukModal<?= $index; ?>">
-      <div class="card-body">
-        <!-- Menampilkan detail produk -->
-        <h4 class="card-title"><?= $row['nama']; ?></h4>
-        <h5 class="card-title"><?= $row['jenis']; ?></h5>
-        <p class="card-text"><?= formatRupiah($row['harga']); ?></p>
-        <p class="card-text"><?= $row['deskripsi']; ?></p>
-        <button class="btn btn-success pesan-btn" data-bs-toggle="modal" data-bs-target="#detailProdukModal<?= $index; ?>">Pesan di WhatsApp</button>
-
+      <div class="col">
+        <div class="card" style="width: calc(100% - 20px);"> <!-- Adjusted width -->
+            <img src="assets/img/<?= $row['gambar']; ?>" class="card-img-top" alt="..." data-bs-toggle="modal" data-bs-target="#detailProdukModal<?= $index; ?>">
+            <div class="card-body">
+                <!-- Menampilkan detail produk -->
+                <h4 class="card-title"><?= $row['nama']; ?></h4>
+                <h5 class="card-title"><?= $row['jenis']; ?></h5>
+                <p class="card-text">
+                    <?php 
+                    $description = $row['deskripsi'];
+                    $max_chars = 100; // maximum characters to show by default
+                    if (strlen($description) > $max_chars) {
+                        // Trim the description to the maximum characters
+                        $trimmed_description = substr($description, 0, $max_chars);
+                        echo $trimmed_description;
+                        // Display "Show More" button
+                        echo '<span id="dots'.$index.'">...</span><span id="more'.$index.'" style="display:none;">'.substr($description, $max_chars).'</span>';
+                        echo '<button onclick="showMore'.$index.'()" id="readMoreBtn'.$index.'" class="btn btn-link">Tampilkan lebih banyak</button>';
+                        echo '<script>
+                                function showMore'.$index.'() {
+                                    var dots = document.getElementById("dots'.$index.'");
+                                    var moreText = document.getElementById("more'.$index.'");
+                                    var btnText = document.getElementById("readMoreBtn'.$index.'");
+                                    if (dots.style.display === "none") {
+                                        dots.style.display = "inline";
+                                        btnText.innerHTML = "Tampilkan lebih banyak";
+                                        moreText.style.display = "none";
+                                    } else {
+                                        dots.style.display = "none";
+                                        btnText.innerHTML = "Tampilkan lebih sedikit";
+                                        moreText.style.display = "inline";
+                                    }
+                                }
+                              </script>';
+                    } else {
+                        echo $description;
+                    }
+                    ?>
+                </p>
+                <button class="btn btn-success pesan-btn" data-bs-toggle="modal" data-bs-target="#detailProdukModal<?= $index; ?>">Pesan di WhatsApp</button>
+            </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal Detail Produk untuk setiap produk -->
+      <!-- Modal Detail Produk untuk setiap produk -->
   <div class="modal fade" id="detailProdukModal<?= $index; ?>" tabindex="-1" aria-labelledby="detailProdukModalLabel<?= $index; ?>" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -201,32 +235,33 @@
         </div>
     </div>
 
-  <?php if (($index + 1) % 3 == 0 || $index == count($produk) - 1): ?>
+      <?php if (($index + 1) % 3 == 0 || $index == count($produk) - 1): ?>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <?php $active = false; ?>
-  <?php endif; ?>
-<?php endforeach; ?>
+        <?php $active = false; ?>
+      <?php endif; ?>
+    <?php endforeach; ?>
 
-  </div>
 
-  <button class="carousel-control-prev" type="button" data-bs-target="#produkCarousel" data-bs-slide="prev">
-  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-  <span class="visually-hidden">Previous</span>
-</button>
-<button class="carousel-control-next" type="button" data-bs-target="#produkCarousel" data-bs-slide="next">
-  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-  <span class="visually-hidden">Next</span>
-</button>
+    <button class="carousel-control-prev" type="button" data-bs-target="#produkCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#produkCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 
 </div>
+<!-- End Produk Section -->
 
 
 
 
 
-        <!-- ======= Cara Pemesanan ======= -->
+
+<!-- ======= Cara Pemesanan ======= -->
 <section id="services2" class="services2">
   <div class="container">
 
@@ -234,7 +269,6 @@
       <h3>Cara Pemesanan</h3>
     </div>
 
-    <section id="about" class="about">
       <div class="container">
         <div class="">
           <h4>Tahap Pemesanan</h4>
@@ -247,10 +281,9 @@
           </p>
         </div>
       </div>
-    </section><!-- End Cara Pemesanan-->
 
   </div>
-</section>
+  </section><!-- End Cara Pemesanan-->
 
 
   <!-- ======= Footer ======= -->
